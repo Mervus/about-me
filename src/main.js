@@ -1,0 +1,94 @@
+import './style.css'
+import {fbm, staticTerrain, updateTerrain} from "./PerspectiveMesh.js";
+
+// TODO: Fallback if performance not enough.
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(25, 16 / 9, 0.1, 200);
+const canvas = document.getElementById('canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+let time = 0;
+let mouseX = 0;
+let mouseY = 0;
+let targetCamX = 0;
+let targetCamY = 8;
+
+const segW = 25;
+const segH = 25;
+
+const planeGeo = new THREE.PlaneGeometry(15, 15, segW, segH);
+const wireMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.18,
+});
+const terrain = new THREE.Mesh(planeGeo, wireMat);
+const posAttr = planeGeo.attributes.position;
+const vertexCount = posAttr.count;
+
+const bgGeo = new THREE.PlaneGeometry(120, 80, 80, 80);
+const bgPos = bgGeo.attributes.position;
+const bgMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.06,
+});
+const bgMesh = new THREE.Mesh(bgGeo, bgMat);
+
+
+function setupThreeJs() {
+    scene.background = new THREE.Color(0x18181b); // Needs to match Page zinc-900
+
+    scene.fog = new THREE.FogExp2(0x0a0a0a, 0.035);
+
+    camera.position.set(0, 33, 22);
+    camera.lookAt(0, 0, 0);
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    terrain.position.y = -3;
+
+    scene.add(terrain);
+    scene.add(bgMesh);
+
+    bgMesh.position.set(0, 12, -40);
+    planeGeo.rotateX(1.5);
+
+    for (let i = 0; i < bgPos.count; i++) {
+        const x = bgPos.getX(i);
+        const z = bgPos.getZ(i);
+        const y = fbm(x * 0.04 + 10, z * 0.04 + 10, 4) * 6;
+        bgPos.setY(i, y);
+    }
+
+    staticTerrain(vertexCount, posAttr)
+}
+
+function render() {
+    requestAnimationFrame(render);
+    time += 0.012;
+
+    //updateTerrain(vertexCount, posAttr, time);
+
+    // Slowly rotate terrain
+    terrain.rotation.y += 0.001;
+
+    // Smooth camera follow
+    //targetCamX = mouseX * 6;
+    //targetCamY = 8 - mouseY * 3;
+    camera.position.x += (targetCamX - camera.position.x) * 0.03;
+    camera.position.y += (targetCamY - camera.position.y) * 0.03;
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+setupThreeJs();
+render();

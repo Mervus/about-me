@@ -1,0 +1,98 @@
+export function hash(x, y) {
+    let n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+    return n - Math.floor(n);
+}
+
+export function smoothNoise(x, y) {
+    const ix = Math.floor(x);
+    const iy = Math.floor(y);
+    const fx = x - ix;
+    const fy = y - iy;
+    // Smoothstep
+    const ux = fx * fx * (3 - 2 * fx);
+    const uy = fy * fy * (3 - 2 * fy);
+
+    const a = hash(ix, iy);
+    const b = hash(ix + 1, iy);
+    const c = hash(ix, iy + 1);
+    const d = hash(ix + 1, iy + 1);
+
+    return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+}
+
+export function fbm(x, y, octaves) {
+    let val = 0;
+    let amp = 1;
+    let freq = 1;
+    let max = 0;
+    for (let i = 0; i < octaves; i++) {
+        val += smoothNoise(x * freq, y * freq) * amp;
+        max += amp;
+        amp *= 0.5;
+        freq *= 2.0;
+    }
+    return val / max;
+}
+
+export function staticTerrain(vertexCount, posAttr, gridSize = 7.5) {
+    const hillCenterX = gridSize * 0.6;  // Top right
+    const hillCenterZ = -gridSize * 0.6;
+    const hillRadius = 5;
+    const hillHeight = 3.5;
+
+    for (let i = 0; i < vertexCount; i++) {
+        const x = posAttr.getX(i);
+        const z = posAttr.getZ(i);
+
+        // Base terrain noise - subtle variation across flat areas
+        const baseNoise = fbm(x * 0.15, z * 0.15, 3) * 0.4;
+
+        // Small ripples for texture
+        const ripple = Math.sin(x * 0.8) * Math.sin(z * 0.8) * 0.15;
+
+        // Distance from hill center
+        const dx = x - hillCenterX;
+        const dz = z - hillCenterZ;
+        const dist = Math.sqrt(dx * dx + dz * dz);
+
+        // Hill with noise detail
+        let hill = 0;
+        if (dist < hillRadius) {
+            const falloff = Math.cos((dist / hillRadius) * Math.PI * 0.5);
+            // Add noise that's stronger near the peak
+            const hillNoise = fbm(x * 0.3 + 10, z * 0.3 + 10, 4) * falloff * 1.2;
+            // Ridges on the hill
+            const ridges = Math.abs(Math.sin(x * 0.5 + z * 0.3)) * falloff * 0.6;
+            hill = falloff * hillHeight + hillNoise + ridges;
+        }
+
+        const y = baseNoise + ripple + hill;
+
+        posAttr.setY(i, y);
+    }
+    posAttr.needsUpdate = true;
+}
+
+export function updateTerrain(vertexCount, posAttr, time) {
+    for (let i = 0; i < vertexCount; i++) {
+        const x = posAttr.getX(i);
+        const z = posAttr.getZ(i);
+
+        // Distance from center - corners are further away
+        const distFromCenter = Math.sqrt(x * x + z * z);
+
+        // Wave 1: flat uniform wave across X
+        const wave1 = Math.sin(x * 0.2 + time) * 0.5;
+
+        // Wave 2: radial wave - corners lag behind center
+        // Phase offset by distance creates the delay effect
+        const wave2 = Math.sin(time * 0.8 - (distFromCenter / 1.8) * 0.25) * 2;
+
+        // Combine waves
+        const y = wave1 + wave2;
+
+        posAttr.setY(i, y);
+    }
+    posAttr.needsUpdate = true;
+}
+
