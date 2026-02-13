@@ -36,14 +36,27 @@ export function fbm(x, y, octaves) {
 
 // Store base heights for wave animation
 let baseHeights = [];
+let hoverDisplacements = [];
+let edgeFades = [];
 
-export function staticTerrain(vertexCount, posAttr, gridSize = 7.5) {
+export function staticTerrain(vertexCount, posAttr, gridSize = 7.5, segW = 25, segH = 25) {
     const hillCenterX = gridSize * 0.6;  // Top right
     const hillCenterZ = -gridSize * 0.6;
     const hillRadius = 5;
     const hillHeight = 3.5;
 
     baseHeights = [];
+    hoverDisplacements = new Array(vertexCount).fill(0);
+
+    // Precompute edge fade: 0 at edges, 1 toward center
+    const edgeMargin = 3; // how many cells from edge to fully fade in
+    edgeFades = [];
+    for (let i = 0; i < vertexCount; i++) {
+        const col = i % (segW + 1);
+        const row = Math.floor(i / (segW + 1));
+        const fromEdge = Math.min(col, segW - col, row, segH - row);
+        edgeFades.push(Math.min(1, fromEdge / edgeMargin));
+    }
 
     for (let i = 0; i < vertexCount; i++) {
         const x = posAttr.getX(i);
@@ -80,7 +93,9 @@ export function staticTerrain(vertexCount, posAttr, gridSize = 7.5) {
     posAttr.needsUpdate = true;
 }
 
-export function waveStaticTerrain(vertexCount, posAttr, time) {
+export function waveStaticTerrain(vertexCount, posAttr, time, delta, hoverPoint, hoverRadius, hoverLift) {
+    const lerpSpeed = 4 * delta;
+
     for (let i = 0; i < vertexCount; i++) {
         const x = posAttr.getX(i);
         const z = posAttr.getZ(i);
@@ -88,7 +103,23 @@ export function waveStaticTerrain(vertexCount, posAttr, time) {
         // Gentle wave on top of static terrain
         const wave = Math.sin(x * 0.3 + time * 0.5) * Math.cos(z * 0.2 + time * 0.3) * 0.25;
 
-        posAttr.setY(i, baseHeights[i] + wave);
+        // Target hover displacement for this vertex
+        let target = 0;
+        if (hoverPoint) {
+            const dx = x - hoverPoint.x;
+            const dz = z - hoverPoint.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+            if (dist < hoverRadius) {
+                const t = 1 - dist / hoverRadius;
+                target = t * t * (3 - 2 * t) * hoverLift;
+            }
+        }
+
+        // Smooth lerp toward target, scaled by edge fade
+        target *= edgeFades[i];
+        hoverDisplacements[i] += (target - hoverDisplacements[i]) * lerpSpeed;
+
+        posAttr.setY(i, baseHeights[i] + wave + hoverDisplacements[i]);
     }
     posAttr.needsUpdate = true;
 }

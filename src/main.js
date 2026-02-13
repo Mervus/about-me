@@ -31,6 +31,14 @@ let targetCamX = 0;
 let targetCamY = 8;
 let rotationDir = 1;
 
+// Hover state
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let isHovered = false;
+let hoverPoint = new THREE.Vector3(); // intersection in local space
+const HOVER_RADIUS = 3;
+const HOVER_LIFT = 1.2;
+
 // Rotation speed in radians per second
 const ROTATION_SPEED = 0.04;
 
@@ -42,6 +50,7 @@ const wireMat = new THREE.MeshBasicMaterial({
     color: 0xef4444, //##006400
     wireframe: true,
     opacity: 1,
+    side: THREE.DoubleSide,
 });
 const terrain = new THREE.Mesh(planeGeo, wireMat);
 const posAttr = planeGeo.attributes.position;
@@ -82,7 +91,11 @@ function setupThreeJs() {
         bgPos.setY(i, y);
     }
 
-    staticTerrain(vertexCount, posAttr)
+    staticTerrain(vertexCount, posAttr, 7.5, segW, segH)
+
+    // Large bounding sphere so raycaster broad-phase never rejects
+    // (vertices shift every frame, stale auto-computed sphere misses hits)
+    planeGeo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 50);
 }
 
 function render() {
@@ -92,7 +105,18 @@ function render() {
 
     //updateTerrain(vertexCount, posAttr, time);
 
-    waveStaticTerrain(vertexCount, posAttr, time);
+    // Hover raycast
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(terrain);
+    isHovered = intersects.length > 0;
+
+    if (isHovered) {
+        // Convert world-space hit to local mesh space
+        hoverPoint.copy(intersects[0].point);
+        terrain.worldToLocal(hoverPoint);
+    }
+
+    waveStaticTerrain(vertexCount, posAttr, time, delta, isHovered ? hoverPoint : null, HOVER_RADIUS, HOVER_LIFT);
     if (terrain.rotation.y >= 1.4 || terrain.rotation.y <= -0.1) {
         rotationDir *= -1;
     }
@@ -108,6 +132,11 @@ function render() {
 
     renderer.render(scene, camera);
 }
+
+window.addEventListener('mousemove', (e) => {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+});
 
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
