@@ -5,7 +5,24 @@ import {fbm, staticTerrain, updateTerrain, waveStaticTerrain} from "./Perspectiv
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 200);
 const canvas = document.getElementById('canvas');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+let renderer;
+try {
+    renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        powerPreference: 'default',       // don't demand high-performance GPU
+        failIfMajorPerformanceCaveat: false, // allow software rendering
+        alpha: true,
+    });
+} catch (e) {
+    // Fallback: show a static CSS gradient background instead
+    document.getElementById('bottom').classList.remove('bg-black/75');
+    document.getElementById('bottom').classList.add('bg-transparnet');
+    console.warn('WebGL not available, using CSS fallback');
+    // Stop execution of the rest of the Three.js code
+    throw new Error('WebGL unavailable');
+}
+
 let time = 0;
 let mouseX = 0;
 let mouseY = 0;
@@ -38,8 +55,7 @@ const bgMesh = new THREE.Mesh(bgGeo, bgMat);
 
 
 function setupThreeJs() {
-    scene.background = new THREE.Color(0x18181b); // Needs to match Page zinc-900
-
+    //scene.background = new THREE.Color(0x18181b); // Needs to match Page zinc-900
     scene.fog = new THREE.FogExp2(0x0a0a0a, 0.035);
 
     camera.position.set(0, 33, 22);
