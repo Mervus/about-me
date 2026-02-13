@@ -19,3 +19,23 @@ canvas {
     backdrop-filter: blur(4.2px);
     -webkit-backdrop-filter: blur(4.2px);
 }
+
+.reveal pre code, .hljs {
+    background-color: rgba(255, 255, 255, 0) !important;
+    color: #DCDCDC;
+    padding: 5px;
+    overflow: auto;
+    max-height: 400px;
+    word-wrap: normal;
+}
+.reveal pre, .hljs {
+    box-shadow: none !important;
+}
+
+.filter{
+    filter: grayscale(100%);
+    width:100px;
+    height:100px;
+    /*Scale down will take the necessary specified space that is 100px x 100px without stretching the image*/
+    object-fit:scale-down;
+}
