@@ -1,9 +1,9 @@
 import './style.css'
-import {fbm, staticTerrain, updateTerrain} from "./PerspectiveMesh.js";
+import {fbm, staticTerrain, updateTerrain, waveStaticTerrain} from "./PerspectiveMesh.js";
 
 // TODO: Fallback if performance not enough.
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(25, 16 / 9, 0.1, 200);
+const camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 200);
 const canvas = document.getElementById('canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 let time = 0;
@@ -11,16 +11,16 @@ let mouseX = 0;
 let mouseY = 0;
 let targetCamX = 0;
 let targetCamY = 8;
+let rotationDir = 1;
 
 const segW = 25;
 const segH = 25;
 
 const planeGeo = new THREE.PlaneGeometry(15, 15, segW, segH);
 const wireMat = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
+    color: 0xef4444, //##006400
     wireframe: true,
-    transparent: true,
-    opacity: 0.18,
+    opacity: 1,
 });
 const terrain = new THREE.Mesh(planeGeo, wireMat);
 const posAttr = planeGeo.attributes.position;
@@ -71,8 +71,12 @@ function render() {
 
     //updateTerrain(vertexCount, posAttr, time);
 
-    // Slowly rotate terrain
-    terrain.rotation.y += 0.001;
+    waveStaticTerrain(vertexCount, posAttr, time);
+    if (terrain.rotation.y >= 1.4 || terrain.rotation.y <= -0.1) {
+        rotationDir *= -1;
+    }
+
+    terrain.rotation.y += 0.0007 * rotationDir;
 
     // Smooth camera follow
     //targetCamX = mouseX * 6;

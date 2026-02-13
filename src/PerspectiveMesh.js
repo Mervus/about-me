@@ -34,11 +34,16 @@ export function fbm(x, y, octaves) {
     return val / max;
 }
 
+// Store base heights for wave animation
+let baseHeights = [];
+
 export function staticTerrain(vertexCount, posAttr, gridSize = 7.5) {
     const hillCenterX = gridSize * 0.6;  // Top right
     const hillCenterZ = -gridSize * 0.6;
     const hillRadius = 5;
     const hillHeight = 3.5;
+
+    baseHeights = [];
 
     for (let i = 0; i < vertexCount; i++) {
         const x = posAttr.getX(i);
@@ -67,8 +72,21 @@ export function staticTerrain(vertexCount, posAttr, gridSize = 7.5) {
         }
 
         const y = baseNoise + ripple + hill;
-
+        baseHeights.push(y);
         posAttr.setY(i, y);
+    }
+    posAttr.needsUpdate = true;
+}
+
+export function waveStaticTerrain(vertexCount, posAttr, time) {
+    for (let i = 0; i < vertexCount; i++) {
+        const x = posAttr.getX(i);
+        const z = posAttr.getZ(i);
+
+        // Gentle wave on top of static terrain
+        const wave = Math.sin(x * 0.3 + time * 0.5) * Math.cos(z * 0.2 + time * 0.3) * 0.25;
+
+        posAttr.setY(i, baseHeights[i] + wave);
     }
     posAttr.needsUpdate = true;
 }
