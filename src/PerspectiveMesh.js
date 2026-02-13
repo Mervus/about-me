@@ -63,7 +63,9 @@ export function staticTerrain(vertexCount, posAttr, gridSize = 7.5) {
         // Hill with noise detail
         let hill = 0;
         if (dist < hillRadius) {
-            const falloff = Math.cos((dist / hillRadius) * Math.PI * 0.5);
+            // Smoother ease-in using smoothstep curve
+            const t = 1 - dist / hillRadius;
+            const falloff = t * t * t * (t * (t * 6 - 15) + 10); // Smootherstep
             // Add noise that's stronger near the peak
             const hillNoise = fbm(x * 0.3 + 10, z * 0.3 + 10, 4) * falloff * 1.2;
             // Ridges on the hill
