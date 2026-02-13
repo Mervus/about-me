@@ -100,7 +100,7 @@ function setupThreeJs() {
 
 function render() {
     requestAnimationFrame(render);
-    const delta = clock.getDelta();
+    const delta = Math.min(clock.getDelta(), 0.1);
     time += delta;
 
     //updateTerrain(vertexCount, posAttr, time);
@@ -133,6 +133,17 @@ function render() {
     renderer.render(scene, camera);
 }
 
+function calculateAge()
+{
+    let bDate = Date.parse("2006-03-27")
+    var ageDifMs = Date.now() - bDate;
+    var ageDate = new Date(ageDifMs);
+
+    let res = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+    document.getElementById("age").innerHTML = !isNaN(res) ? res : "2006" ;
+}
+
 window.addEventListener('mousemove', (e) => {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -144,5 +155,6 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+calculateAge();
 setupThreeJs();
 render();
