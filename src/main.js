@@ -23,12 +23,16 @@ try {
     throw new Error('WebGL unavailable');
 }
 
+const clock = new THREE.Clock();
 let time = 0;
 let mouseX = 0;
 let mouseY = 0;
 let targetCamX = 0;
 let targetCamY = 8;
 let rotationDir = 1;
+
+// Rotation speed in radians per second
+const ROTATION_SPEED = 0.04;
 
 const segW = 25;
 const segH = 25;
@@ -83,7 +87,8 @@ function setupThreeJs() {
 
 function render() {
     requestAnimationFrame(render);
-    time += 0.012;
+    const delta = clock.getDelta();
+    time += delta;
 
     //updateTerrain(vertexCount, posAttr, time);
 
@@ -92,7 +97,7 @@ function render() {
         rotationDir *= -1;
     }
 
-    terrain.rotation.y += 0.0007 * rotationDir;
+    terrain.rotation.y += ROTATION_SPEED * delta * rotationDir;
 
     // Smooth camera follow
     //targetCamX = mouseX * 6;
