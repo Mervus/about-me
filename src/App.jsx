@@ -1,14 +1,28 @@
 import { useEffect } from 'react'
 
-function calculateAge() {
-    const bDate = Date.parse("2006-03-27")
-    const ageDifMs = Date.now() - bDate
-    const ageDate = new Date(ageDifMs)
-    return Math.abs(ageDate.getUTCFullYear() - 1970)
+/**
+ *
+ * @param {Date}start
+ * @param {Date}end
+ */
+function calculateAgeDiff(start, end) {
+    const difMs = Date.now() - start
+    const rDate = new Date(difMs)
+    return Math.abs(rDate.getUTCFullYear() - 1970)
+}
+
+function getAgeInYears() {
+    return calculateAgeDiff(Date.parse("2006-03-27"), Date.now())
+}
+
+function getProgrammingTimeInYears()
+{
+    return calculateAgeDiff(Date.parse("2021-06-00"), Date.now())
 }
 
 export default function App() {
-    const age = calculateAge()
+    const _age = getAgeInYears()
+    const _programmingTimeInYears = getProgrammingTimeInYears()
 
     useEffect(() => {
         window.hljs?.highlightAll()
@@ -21,7 +35,7 @@ export default function App() {
                 <div className="flex flex-col p-15 xl:p-25">
                     <div className="flex flex-col w-fit p-4">
                         <div><span className="text-red-500">Anwendungs</span>entwickler</div>
-                        <div className="text-3xl">Marvin Mergili <span className="text-sm">{!isNaN(age) ? age : "2006"}</span></div>
+                        <div className="text-3xl">Marvin Mergili <span className="text-sm">{!isNaN(_age) ? _age : "2006"}</span></div>
                         <div>Fachinformatiker für Anwendungsentwicklung mit Erfahrung in <br /> Full-Stack-Entwicklung, API-Integration und Cloud-Lösungen.</div>
                     </div>
                     <div className="mt-6 ml-4">
