@@ -1,4 +1,3 @@
-import './style.css'
 import {fbm, staticTerrain, updateTerrain, waveStaticTerrain} from "./PerspectiveMesh.js";
 
 // TODO: Fallback if performance not enough.
@@ -133,17 +132,6 @@ function render() {
     renderer.render(scene, camera);
 }
 
-function calculateAge()
-{
-    let bDate = Date.parse("2006-03-27")
-    var ageDifMs = Date.now() - bDate;
-    var ageDate = new Date(ageDifMs);
-
-    let res = Math.abs(ageDate.getUTCFullYear() - 1970);
-
-    document.getElementById("age").innerHTML = !isNaN(res) ? res : "2006" ;
-}
-
 window.addEventListener('mousemove', (e) => {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -155,6 +143,5 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-calculateAge();
 setupThreeJs();
 render();
