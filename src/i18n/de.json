@@ -1,0 +1,27 @@
+{
+    "hero": {
+        "titleHighlight": "Anwendungs",
+        "titleRest": "entwickler",
+        "description": "Fachinformatiker für Anwendungsentwicklung mit Erfahrung in Full-Stack-Entwicklung, API-Integration und Cloud-Lösungen."
+    },
+    "aboutMe": {
+        "labelStart": "Über",
+        "labelHighlight": "Mich",
+        "info1": "Ich programmiere seit 2020 und habe meine Ausbildung zum Fachinformatiker für Anwendungsentwicklung im Januar 2025 abgeschlossen.",
+        "info2": "",
+        "job1": "Jan 2025 - Jan 2026",
+        "job1Role": "Anwendungsentwickler",
+        "job1Company": "OMTEC Vertriebs GmbH",
+        "job2": "Aug 2021 - Jan 2025",
+        "job2Role": "Ausbildung zum Fachinformatiker Anwendungsentwicklung",
+        "job2Company": "OMTEC Vertriebs GmbH"
+    },
+    "apis": {
+        "title": "APIs",
+        "description": "Erfahrung mit der Integration verschiedener APIs mittels OAuth2-Authentifizierung in Laravel-Anwendungen."
+    },
+    "frameworks": {
+        "title": "Frameworks",
+        "description": "Erfahrung mit verschiedenen Frameworks"
+    }
+}

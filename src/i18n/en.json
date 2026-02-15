@@ -1,0 +1,27 @@
+{
+    "hero": {
+        "titleHighlight": "Application",
+        "titleRest": "Developer",
+        "description": "Developer with experience in full-stack web development, API integration and cloud solutions."
+    },
+    "aboutMe": {
+        "labelStart": "About",
+        "labelHighlight": "Me",
+        "info1":  "I've been programming since late 2020 and completed my apprenticeship as an IT Specialist for Application Development in January 2025.",
+        "info2":  "",
+        "job1": "Jan 2025 - Jan 2026",
+        "job1Role": "Application Developer",
+        "job1Company": "OMTEC Vertriebs GmbH",
+        "job2": "Aug 2021 - Jan 2025",
+        "job2Role": "IT Specialist Apprenticeship",
+        "job2Company": "OMTEC Vertriebs GmbH"
+    },
+    "apis": {
+        "title": "APIs",
+        "description": "Experience integrating various APIs using OAuth2 authentication in Laravel applications."
+    },
+    "frameworks": {
+        "title": "Frameworks",
+        "description": "Experience with various frameworks"
+    }
+}

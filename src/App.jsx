@@ -1,28 +1,28 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /**
- *
- * @param {Date}start
- * @param {Date}end
+ * @param {number}start
  */
-function calculateAgeDiff(start, end) {
+function calculateAgeDiff(start) {
     const difMs = Date.now() - start
     const rDate = new Date(difMs)
     return Math.abs(rDate.getUTCFullYear() - 1970)
 }
 
 function getAgeInYears() {
-    return calculateAgeDiff(Date.parse("2006-03-27"), Date.now())
-}
-
-function getProgrammingTimeInYears()
-{
-    return calculateAgeDiff(Date.parse("2021-06-00"), Date.now())
+    return calculateAgeDiff(Date.parse("2006-03-27"))
 }
 
 export default function App() {
     const _age = getAgeInYears()
-    const _programmingTimeInYears = getProgrammingTimeInYears()
+    const { t, i18n } = useTranslation()
+
+    const toggleLanguage = () => {
+        const next = i18n.language === 'de' ? 'en' : 'de'
+        i18n.changeLanguage(next)
+        localStorage.setItem('lang', next)
+    }
 
     useEffect(() => {
         window.hljs?.highlightAll()
@@ -31,12 +31,19 @@ export default function App() {
 
     return (
         <>
+            <button
+                onClick={toggleLanguage}
+                className="fixed top-4 right-4 z-50 px-3 py-1 rounded border border-zinc-700 text-sm hover:bg-red-500 duration-300"
+            >
+                {i18n.language === 'de' ? 'EN' : 'DE'}
+            </button>
+
             <div className="w-full flex flex-row justify-between">
                 <div className="flex flex-col p-15 xl:p-25">
                     <div className="flex flex-col w-fit p-4">
-                        <div><span className="text-red-500">Anwendungs</span>entwickler</div>
+                        <div><span className="text-red-500">{t('hero.titleHighlight')}</span>{t('hero.titleRest')}</div>
                         <div className="text-3xl">Marvin Mergili <span className="text-sm">{!isNaN(_age) ? _age : "2006"}</span></div>
-                        <div>Fachinformatiker für Anwendungsentwicklung mit Erfahrung in <br /> Full-Stack-Entwicklung, API-Integration und Cloud-Lösungen.</div>
+                        <div className={"md:w-1/2"}>{t('hero.description')}</div>
                     </div>
                     <div className="mt-6 ml-4">
                         <a href="https://github.com/Mervus" className="w-fit p-2 rounded border border-zinc-800 flex space-x-1.5 duration-300 ease-in-out hover:-translate-y-1 hover:bg-red-500">
@@ -45,6 +52,7 @@ export default function App() {
                         </a>
                     </div>
                 </div>
+
                 {/* Needs to be formatted badly to work correctly. */}
                 <div className="!hidden invisible sm:hidden md:block md:visible sm:p-0 xl:pl-45 xl:p-25 pt-10"><pre><code className="language-cpp">{`void main()
 {
@@ -54,12 +62,13 @@ export default function App() {
                 </div>
             </div>
             <div className="w-full flex flex-row justify-end">
-                <div className="flex flex-col p-15 xl:p-25">
-                    <div className="flex flex-col w-fit p-4 text-end">
-                        <div>Berufs<span className="text-red-500">erfahrung</span></div>
-                        <div className="space-y-1.5">
-                            <div className="p-2 pr-0">Jan 2025 - Jan 2026 <br /> <span>Anwendungsentwickler</span>, OMTEC Vertriebs GmbH <br /> </div>
-                            <div className="p-2 pr-0">Aug 2021 - Jan 2025 <br /> Ausbildung zum <span>Fachinformatiker</span>, OMTEC Vertriebs GmbH </div>
+                <div className="flex flex-col md:w-1/2 p-15 xl:p-25">
+                    <div className="flex flex-col p-4 text-end">
+                        <div>{t('aboutMe.labelStart')}<span className="text-red-500">{t('aboutMe.labelHighlight')}</span></div>
+                        <div>
+                            <div className="p-2 pr-0">{t('aboutMe.info1')} <br /> {t('aboutMe.info2')} <br /> </div>
+                            <div className="p-2 pr-0">{t('aboutMe.job1')} <br /> <span>{t('aboutMe.job1Role')}</span>, {t('aboutMe.job1Company')} </div>
+                            <div className="p-2 pr-0">{t('aboutMe.job2')} <br /> <span>{t('aboutMe.job2Role')}</span>, {t('aboutMe.job2Company')} </div>
                         </div>
                     </div>
                 </div>
@@ -67,9 +76,9 @@ export default function App() {
             {/* Spacer */}
             <div className="h-20"></div>
             <div className="bg-black/75 w-full flex flex-col items-center">
-                <div className="mb-8 mt-5 text-2xl">APIs</div>
+                <div className="mb-8 mt-5 text-2xl">{t('apis.title')}</div>
                 <p className="text-zinc-400 max-w-2xl text-center px-4 mb-10">
-                    Erfahrung mit der Integration verschiedener APIs mittels OAuth2-Authentifizierung in Laravel-Anwendungen.
+                    {t('apis.description')}
                 </p>
                 <div className="flex md:flex-row flex-col items-start">
                     <pre>
@@ -85,10 +94,10 @@ class UPS;`}</code>
 
             <div id="bottom" className="bg-black/75 bottom-0 w-full flex flex-col items-center pb-16">
                 <div className="mt-20 mb-8 text-2xl">
-                    Frameworks
+                    {t('frameworks.title')}
                 </div>
                 <p className="text-zinc-400 max-w-2xl text-center px-4 mb-10">
-                    Erfahrung mit verschiedenen Frameworks
+                    {t('frameworks.description')}
                 </p>
                 <div>
                     <div className="flex flex-wrap gap-5">
