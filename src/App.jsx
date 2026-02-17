@@ -123,6 +123,10 @@ class UPS;`}</code>
                 </div>
             </div>
 
+            <footer className="bg-black/75 w-full py-6 text-center text-sm text-zinc-400">
+                <a href="/impressum/" className="hover:text-red-500 duration-300">Impressum</a>
+            </footer>
+
             <canvas id="canvas"></canvas>
         </>
     )

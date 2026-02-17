@@ -23,5 +23,15 @@
     "frameworks": {
         "title": "Frameworks",
         "description": "Erfahrung mit verschiedenen Frameworks"
+    },
+    "impressum": {
+        "title": "Impressum",
+        "back": "Zurück",
+        "infoTitle": "Angaben gemäß § 5 TMG",
+        "address": "Neuwangerooger Str. 2",
+        "contactTitle": "Kontakt",
+        "email": "mergili.freelance@gmail.com",
+        "disclaimerTitle": "Haftungsausschluss",
+        "disclaimerText": "Die Inhalte dieser Seite wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden."
     }
 }

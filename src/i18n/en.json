@@ -23,5 +23,15 @@
     "frameworks": {
         "title": "Frameworks",
         "description": "Experience with various frameworks"
+    },
+    "impressum": {
+        "title": "Legal Notice",
+        "back": "Back",
+        "infoTitle": "Information according to § 5 TMG",
+        "address": "Neuwangerooger Str. 2",
+        "contactTitle": "Contact",
+        "email": "mergili.freelance@gmail.com",
+        "disclaimerTitle": "Disclaimer",
+        "disclaimerText": "The contents of this website have been created with the utmost care. However, no guarantee can be given for the correctness, completeness, and timeliness of the content."
     }
 }
